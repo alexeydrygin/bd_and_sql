@@ -35,8 +35,9 @@ GROUP BY u.id
 и найдите разницу дат отправления между соседними сообщениями, получившегося списка. (используйте LEAD или LAG)
 */
 
-SELECT *, 
-LAG(created_at) OVER (ORDER BY created_at) AS lag_created_at,
-LEAD(created_at) OVER (ORDER BY created_at) AS lead_created_at
-FROM messages 
+SELECT id, from_user_id, to_user_id, created_at,
+  LAG(created_at) OVER (ORDER BY created_at) AS lag_created_at,
+  EXTRACT(MINUTE FROM (created_at - LAG(created_at) OVER (ORDER BY created_at))) AS time_diff_minutes
+FROM messages
 ORDER BY created_at ASC;
+

@@ -77,32 +77,31 @@ GROUP BY u.id
 и найдите разницу дат отправления между соседними сообщениями, получившегося списка. (используйте LEAD или LAG)
 */
 
-SELECT *, 
-LAG(created_at) OVER (ORDER BY created_at) AS lag_created_at,
-LEAD(created_at) OVER (ORDER BY created_at) AS lead_created_at
-FROM messages 
+SELECT id, from_user_id, to_user_id, created_at,
+  LAG(created_at) OVER (ORDER BY created_at) AS lag_created_at,
+  EXTRACT(MINUTE FROM (created_at - LAG(created_at) OVER (ORDER BY created_at))) AS time_diff_minutes
+FROM messages
 ORDER BY created_at ASC;
 ```
-
-|id|from_user_id|to_user_id|body|created_at|lag_created_at|lead_created_at|
-|--|--|--|----------------------|----------|--------------|---------------|
-|1|1|2|Voluptatem ut quaerat quia. Pariatur esse amet ratione qui quia. In necessitatibus reprehenderit et. Nam accusantium aut qui quae nesciunt non.|2023-07-05 22:09:12|NULL|2023-07-05 22:11:12|
-|2|2|1|Sint dolores et debitis est ducimus. Aut et quia beatae minus. Ipsa rerum totam modi sunt sed. Voluptas atque eum et odio ea molestias ipsam architecto.|2023-07-05 22:11:12|2023-07-05 22:09:12|2023-07-05 22:13:12|
-|3|3|1|Sed mollitia quo sequi nisi est tenetur at rerum. Sed quibusdam illo ea facilis nemo sequi. Et tempora repudiandae saepe quo.|2023-07-05 22:13:12|2023-07-05 22:11:12|2023-07-05 22:19:12|
-|4|4|1|Quod dicta omnis placeat id et officiis et. Beatae enim aut aliquid neque occaecati odit. Facere eum distinctio assumenda omnis est delectus magnam.|2023-07-05 22:19:12|2023-07-05 22:13:12|2023-07-05 22:20:12|
-|5|1|5|Voluptas omnis enim quia porro debitis facilis eaque ut. Id inventore non corrupti doloremque consequuntur. Molestiae molestiae deleniti exercitationem sunt qui ea accusamus deserunt.|2023-07-05 22:20:12|2023-07-05 22:19:12|2023-07-05 22:22:12|
-|6|1|6|Rerum labore culpa et laboriosam eum totam. Quidem pariatur sit alias. Atque doloribus ratione eum rem dolor vitae saepe.|2023-07-05 22:22:12	|2023-07-05 22:20:12|2023-07-05 22:23:12|
-|7|1|7|Perspiciatis temporibus doloribus debitis. Et inventore labore eos modi. Quo temporibus corporis minus. Accusamus aspernatur nihil nobis placeat molestiae et commodi eaque.|2023-07-05 22:23:12|2023-07-05 22:22:12|2023-07-05 22:29:12|
-|8|8|1|Suscipit dolore voluptas et sit vero et sint. Rem ut ratione voluptatum assumenda nesciunt ea. Quas qui qui atque ut. Similique et praesentium non voluptate iure. Eum aperiam officia quia dolorem.|2023-07-05 22:29:12|2023-07-05 22:23:12|2023-07-05 22:30:12|
-|9|9|3|	Et quia libero aut vitae minus. Rerum a blanditiis debitis sit nam. Veniam quasi aut autem ratione dolorem. Sunt quo similique dolorem odit totam sint sed.|	2023-07-05 22:30:12|	2023-07-05 22:29:12|	2023-07-05 22:33:12|
-|10|	10|	2|	Praesentium molestias quia aut odio. Est quis eius ut animi optio molestiae. Amet tempore sequi blanditiis in est.	|2023-07-05 22:33:12	|2023-07-05 22:30:12	|2023-07-05 22:35:12|
-|11	|8	|3	|Molestiae laudantium quibusdam porro est alias placeat assumenda. Ut consequatur rerum officiis exercitationem eveniet. Qui eum maxime sed in.	|2023-07-05 22:35:12	|2023-07-05 22:33:12	|2023-07-05 22:36:12|
-|12	|8	|1	|Quo asperiores et id veritatis placeat. Aperiam ut sit exercitationem iste vel nisi fugit quia. Suscipit labore error ducimus quaerat distinctio quae quasi.	|2023-07-05 22:36:12	|2023-07-05 22:35:12	|2023-07-05 22:41:12|
-|13	|8	|1	|Earum sunt quia sed harum modi accusamus. Quia dolor laboriosam asperiores aliquam quia. Sint id quasi et cumque qui minima ut quo. Autem sed laudantium officiis sit sit.	|2023-07-05 22:41:12	|2023-07-05 22:36:12	|2023-07-05 22:43:12|
-|14	|4	|1	|Aut enim sint voluptas saepe. Ut tenetur quos rem earum sint inventore fugiat. Eaque recusandae similique earum laborum.	|2023-07-05 22:43:12	|2023-07-05 22:41:12	|2023-07-05 22:43:12|
-|15	|4	|1	|Nisi rerum officiis officiis aut ad voluptates autem. Dolor nesciunt eum qui eos dignissimos culpa iste. Atque qui vitae quos odit inventore eum. Quam et voluptas quia amet.	|2023-07-05 22:43:12	|2023-07-05 22:43:12	|2023-07-05 22:45:12|
-|16	|4	|1	|Consequatur ut et repellat non voluptatem nihil veritatis. Vel deleniti omnis et consequuntur. Et doloribus reprehenderit sed earum quas velit labore.	|2023-07-05 22:45:12	|2023-07-05 22:43:12	|2023-07-05 22:45:12|
-|17	|2	|1	|Iste deserunt in et et. Corrupti rerum a veritatis harum. Ratione consequatur est ut deserunt dolores.	|2023-07-05 22:45:12	|2023-07-05 22:45:12	|2023-07-05 22:49:12|
-|18	|8	|1	|Dicta non inventore autem incidunt accusamus amet distinctio. Aut laborum nam ab maxime. Maxime minima blanditiis et neque. Et laboriosam qui at deserunt magnam.	|2023-07-05 22:49:12	|2023-07-05 22:45:12	|2023-07-05 22:50:12|
-|19	|8	|1	|Amet ad dolorum distinctio excepturi possimus quia. Adipisci veniam porro ipsum ipsum tempora est blanditiis. Magni ut quia eius qui.	|2023-07-05 22:50:12	|2023-07-05 22:49:12	|2023-07-05 22:58:12|
-|20	|8	|1	|Porro aperiam voluptate quo eos nobis. Qui blanditiis cum id eos. Est sit reprehenderit consequatur eum corporis. Molestias quia quo sit architecto aut.	|2023-07-05 22:58:12	|2023-07-05 22:50:12| NULL|	
+|id|from_user_id|to_user_id|created_at|lag_created_at|time_diff_minutes|
+|--|------------|----------|----------|--------------|-----------------|
+|1	|1	|2	|2023-07-05 22:09:12	|NULL|NULL	|
+|2	|2	|1	|2023-07-05 22:11:12	|2023-07-05 22:09:12	|2|
+|3	|3	|1	|2023-07-05 22:13:12	|2023-07-05 22:11:12	|2|
+|4	|4	|1	|2023-07-05 22:19:12	|2023-07-05 22:13:12	|6|
+|5	|1	|5	|2023-07-05 22:20:12	|2023-07-05 22:19:12	|1|
+|6	|1	|6	|2023-07-05 22:22:12	|2023-07-05 22:20:12	|2|
+|7	|1	|7	|2023-07-05 22:23:12	|2023-07-05 22:22:12	|1|
+|8	|8	|1	|2023-07-05 22:29:12	|2023-07-05 22:23:12	|6|
+|9	|9	|3	|2023-07-05 22:30:12	|2023-07-05 22:29:12	|1|
+|10	|10	|2	|2023-07-05 22:33:12	|2023-07-05 22:30:12	|3|
+|11	|8	|3	|2023-07-05 22:35:12	|2023-07-05 22:33:12	|2|
+|12	|8	|1	|2023-07-05 22:36:12	|2023-07-05 22:35:12	|1|
+|13	|8	|1	|2023-07-05 22:41:12	|2023-07-05 22:36:12	|5|
+|14	|4	|1	|2023-07-05 22:43:12	|2023-07-05 22:41:12	|2|
+|15	|4	|1	|2023-07-05 22:43:12	|2023-07-05 22:43:12	|0|
+|16	|4	|1	|2023-07-05 22:45:12	|2023-07-05 22:43:12	|2|
+|17	|2	|1	|2023-07-05 22:45:12	|2023-07-05 22:45:12	|0|
+|18	|8	|1	|2023-07-05 22:49:12	|2023-07-05 22:45:12	|4|
+|19	|8	|1	|2023-07-05 22:50:12	|2023-07-05 22:49:12	|1|
+|20	|8	|1	|2023-07-05 22:58:12	|2023-07-05 22:50:12	|8|
