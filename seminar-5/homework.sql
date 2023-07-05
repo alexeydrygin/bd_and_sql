@@ -36,6 +36,7 @@ GROUP BY u.id
 */
 
 SELECT *, 
-LAG(created_at, 1, 0) OVER (PARTITION BY TIMESTAMPDIFF(SECOND, created_at, created_at)) AS lag_created_at, -- смещение на 1 и вместо NULL будет 0
-LEAD(created_at) OVER (PARTITION BY TIMESTAMPDIFF(SECOND, created_at, created_at)) AS lead_created_at
-FROM messages ORDER BY TIMESTAMPDIFF(SECOND, created_at, NOW()) DESC;
+LAG(created_at) OVER (ORDER BY created_at) AS lag_created_at,
+LEAD(created_at) OVER (ORDER BY created_at) AS lead_created_at
+FROM messages 
+ORDER BY created_at ASC;

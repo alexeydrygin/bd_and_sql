@@ -78,14 +78,15 @@ GROUP BY u.id
 */
 
 SELECT *, 
-LAG(created_at, 1, 0) OVER (PARTITION BY TIMESTAMPDIFF(SECOND, created_at, created_at)) AS lag_created_at, -- смещение на 1 и вместо NULL будет 0
-LEAD(created_at) OVER (PARTITION BY TIMESTAMPDIFF(SECOND, created_at, created_at)) AS lead_created_at
-FROM messages ORDER BY TIMESTAMPDIFF(SECOND, created_at, NOW()) DESC;
+LAG(created_at) OVER (ORDER BY created_at) AS lag_created_at,
+LEAD(created_at) OVER (ORDER BY created_at) AS lead_created_at
+FROM messages 
+ORDER BY created_at ASC;
 ```
 
 |id|from_user_id|to_user_id|body|created_at|lag_created_at|lead_created_at|
 |--|--|--|----------------------|----------|--------------|---------------|
-|1|1|2|Voluptatem ut quaerat quia. Pariatur esse amet ratione qui quia. In necessitatibus reprehenderit et. Nam accusantium aut qui quae nesciunt non.|2023-07-05 22:09:12|0|2023-07-05 22:11:12|
+|1|1|2|Voluptatem ut quaerat quia. Pariatur esse amet ratione qui quia. In necessitatibus reprehenderit et. Nam accusantium aut qui quae nesciunt non.|2023-07-05 22:09:12|NULL|2023-07-05 22:11:12|
 |2|2|1|Sint dolores et debitis est ducimus. Aut et quia beatae minus. Ipsa rerum totam modi sunt sed. Voluptas atque eum et odio ea molestias ipsam architecto.|2023-07-05 22:11:12|2023-07-05 22:09:12|2023-07-05 22:13:12|
 |3|3|1|Sed mollitia quo sequi nisi est tenetur at rerum. Sed quibusdam illo ea facilis nemo sequi. Et tempora repudiandae saepe quo.|2023-07-05 22:13:12|2023-07-05 22:11:12|2023-07-05 22:19:12|
 |4|4|1|Quod dicta omnis placeat id et officiis et. Beatae enim aut aliquid neque occaecati odit. Facere eum distinctio assumenda omnis est delectus magnam.|2023-07-05 22:19:12|2023-07-05 22:13:12|2023-07-05 22:20:12|
